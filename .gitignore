@@ -29,3 +29,10 @@ out/
 *.swp
 *~
 
+### Generated sources files ###
+src/main/generated/
+src/main/kotlin/generated/
+src/main/resources/generated/
+generated/
+.kapt/
+.kotlin/
