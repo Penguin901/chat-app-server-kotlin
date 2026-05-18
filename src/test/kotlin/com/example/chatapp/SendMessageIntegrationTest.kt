@@ -74,6 +74,5 @@ class SendMessageIntegrationTest(
         assertThat(sendMessageResponseCaptorValue.sender.userId).isEqualTo(sender.id)
         assertThat(sendMessageResponseCaptorValue.chatRoomId).isEqualTo(createChatRoomResponse.id)
         assertThat(sendMessageResponseCaptorValue.messageContent).isEqualTo(messages[0].messageContent)
-        println("메세지" + sendMessageResponseCaptorValue.messageContent)
     }
 }
