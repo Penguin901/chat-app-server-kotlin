@@ -15,9 +15,9 @@ import java.time.LocalDateTime
 @Table(
     name = "chat_members",
     uniqueConstraints = [UniqueConstraint(
-        name = "uk_chat_members_chatroom_user", columnNames = ["chat_room_id", "user_id"]
+        name = "uk_chat_members_chat_room_id_user_id", columnNames = ["chat_room_id", "user_id"]
     )],
-    indexes = [Index(name = "idx_chat_members_user_active", columnList = "user_id, active")]
+    indexes = [Index(name = "idx_chat_members_user_id_active", columnList = "user_id, active")]
 )
 class ChatMember private constructor(
     chatRoom: ChatRoom,

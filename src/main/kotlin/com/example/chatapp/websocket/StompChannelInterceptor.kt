@@ -8,7 +8,6 @@ import com.example.chatapp.security.UserPrincipal
 import com.example.chatapp.security.jwt.JwtService
 import com.example.chatapp.security.jwt.StompBearerTokenResolver
 import lombok.RequiredArgsConstructor
-import mu.KotlinLogging
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompCommand

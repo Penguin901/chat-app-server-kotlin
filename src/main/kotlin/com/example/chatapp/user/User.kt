@@ -14,8 +14,8 @@ import java.time.LocalDateTime
 @Table(
     name = "users",
     uniqueConstraints = [
-        UniqueConstraint(name = "uk_user_email", columnNames = ["email"]),
-        UniqueConstraint(name = "uk_user_username", columnNames = ["username"])
+        UniqueConstraint(name = "uk_users_email", columnNames = ["email"]),
+        UniqueConstraint(name = "uk_users_username", columnNames = ["username"])
     ]
 )
 
