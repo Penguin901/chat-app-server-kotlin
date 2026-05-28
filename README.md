@@ -27,13 +27,14 @@
  - 널 세이프티로 인해 널이되면 안 되는곳은 처음부터 막음
  - 코드개선 (방만 구독으로 변경)
  - 웹소켓 예외처리 추가
+ - 웹소켓 인증 개선
 
 ## 사용 기술 
  
 Kotlin 1.9.x,
 Spring Boot 3.2.x, Spring Data JPA (Hibernate), Spring Security, 
 WebSocket(STOMP), OAuth 2.0,
-MariaDB 
+MariaDB 10.11.x
  
 결과 및 성과
 
