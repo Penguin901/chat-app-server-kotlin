@@ -53,11 +53,57 @@ Kotlin 1.9.x,
 Spring Boot 3.2.x, Spring Data JPA (Hibernate), Spring Security, 
 WebSocket(STOMP), OAuth 2.0,
 MariaDB 10.11.x
+
+## API
+
+### Authentication
+| 기능 | Method | URL | 설명 |
+|---|---|---|---|
+| 로그인 | POST | /auth/login | 소셜로그인방식으로 로그인 후 사용자 계정을 생성하고, 사용자 인증을 위한 JSON Web Token(Access Token, Refresh Token)을 발급합니다.|
+| 토큰 재발급 | POST | /auth/refresh | Access Token이 만료된 경우, Refresh Token을 통해 사용자 인증을 위한 JSON Web Token(Access Token, Refresh Token)을 재발급합니다.|
  
+| 기능 | Method | URL | 설명 |
+|---|---|---|---|
+| 내 프로필 조회 | GET | /users/me/profile | 현재 로그인한 사용자의 프로필(닉네임, 상태메세지, 프로필이미지URL)을 조회합니다.|
+| 사용자 프로필 조회 | GET | /users/{userId}/profile | 주어진 아이디(userId)의 사용자 프로필(닉네임, 상태메세지, 프로필이미지URL)을 반환합니다.|
+| 계정아이디(username) 사용 가능 여부 조회 | GET | /users/username/availability | 유효한 계정아이디(username)인지 검증하고, 중복 여부를 확인합니다. |
+| 내 프로필 수정 | PUT |  /users/me/profile | 현재 로그인한 사용자의 프로필정보를 수정합니다. |
+| 내 계정아이디(username) 수정| PUT | /users/me/username | 현재 로그인한 사용자의 계정아이디(username)를 수정합니다. |
+| 회원탈퇴 | DELETE | /users/me | 현재 로그인한 사용자의 계정을 비활성화합니다. |
+
+## Friend API
+| 기능 | Method | URL | 설명 |
+|---|---|---|---|
+| 친구 목록 조회 | GET | /friends | 현재 로그인한 사용자의 친구 목록을 조회합니다 |
+| 친구로 등록할 사용자 조회 | GET | /friends/search | 친구로 추가할 사용자의 존재 및 사용자 간 친구 관계 여부를 확인합니다.|
+| 친구 추가 | POST | /friends | 현재 로그인한 사용자와 다른 사용자(targetUserId)의 친구관계를 추가합니다. |
+| 친구 삭제 | DELETE | /friends/{targetUserId} | 현재 로그인한 사용자와 다른 사용자(targetUserId)의 친구관계를 삭제합니다. |
+
+ 
+## Chat Room API
+
+| 기능 | Method | URL | 설명 |
+|---|---|---|---|
+| 채팅방 목록 조회 | GET | /chat-rooms | 현재 로그인한 사용자의 채팅방 목록을 조회합니다.|
+| 채팅방 조회 및 생성 | POST | /chat-rooms | 현재 로그인한 사용자의 채팅방이 존재하는 경우 해당 방을 반환하고, 존재하지 않는 경우 새로운 방을 생성하여 반환합니다. |
+| 채팅방 나가기 | DELETE | /chat-rooms/{chatRoomId}/members/me | 주어진 아이디(chatRoomId)의 채팅방을 현재 로그인한 사용자의 채팅방 목록에서 삭제합니다. |
+
+
+## Chat Message API
+| 기능 | Method | URL | 설명 |
+|---|---|---|---|
+| 메세지 조회 | GET | /chat-messages/{chatRoomId} | 주어진 아이디(chatRoomId)의 메세지를 조회합니다.(클라이언트와의 메세지 데이터 동기화 시 사용) |
+| 채팅 메시지 전송 | STOMP | `/pub/message` | 채팅 메시지를 전송합니다. |
+| 채팅 메시지 구독 | SUBSCRIBE | `/sub/chatroom/{chatRoomId}` | 특정 채팅방(chatRoomId)의 메시지를 실시간으로 구독합니다. |
+
+
+erd
+
 결과 및 성과
 
 프로젝트의 결과물과 어떤 문제를 해결했는지, 어떤 성과를 달성했는지 강조한다. 정량적 수치가 있으면 더 좋다.
-
+실제운영상황에서 사용자 증가 고려해 다른 기술추가하면..? 카프카, 레디스 등  직접 기술추가ㅡㄹ ㄹ언급하지는 말고 이런 점을 개선을 위해 생각해보면 좋겠다...라고
+ 
 그외
 비슷한 널 세이프티를 가진 dart와 비교해서 왜..비슷한 성격의 언어인데..프레임워크에서의 차이점...
 회원탈퇴 하드 딜레이트..하면 다 건드려야..
