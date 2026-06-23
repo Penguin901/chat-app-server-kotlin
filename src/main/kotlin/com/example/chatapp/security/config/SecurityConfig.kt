@@ -27,6 +27,8 @@ class SecurityConfig(
             authorizeHttpRequests {
                 authorize("/auth/**", permitAll)
                 authorize("/ws/**", permitAll)
+                authorize("/swagger-ui/**", permitAll)
+                authorize("/v3/api-docs/**", permitAll)
                 authorize(anyRequest, authenticated)
             }
 

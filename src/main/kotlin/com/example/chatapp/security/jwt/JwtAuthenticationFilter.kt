@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
@@ -16,12 +17,15 @@ class JwtAuthenticationFilter(
 ) : OncePerRequestFilter() {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        // 로그인, 토큰 재발급, 웹소켓 요청은 필터에서 제외
-        val excludePath = arrayOf("/auth/login", "/auth/refresh", "/ws")
-        val path = request.requestURI
+        val excludedPaths = listOf(
+            AntPathRequestMatcher("/auth/**"),
+            AntPathRequestMatcher("/ws/**"),
+            AntPathRequestMatcher("/swagger-ui/**"),
+            AntPathRequestMatcher("/v3/api-docs/**")
+        )
 
-        return excludePath.any { prefix ->
-            path.startsWith(prefix)
+        return excludedPaths.any {
+            it.matches(request)
         }
     }
 

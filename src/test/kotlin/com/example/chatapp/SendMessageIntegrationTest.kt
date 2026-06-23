@@ -1,7 +1,7 @@
 package com.example.chatapp
 
 import com.example.chatapp.auth.oauth.OAuthProvider
-import com.example.chatapp.chat.message.ChatMessageController
+import com.example.chatapp.chat.message.ChatMessageStompController
 import com.example.chatapp.chat.message.ChatMessageRepository
 import com.example.chatapp.chat.message.dto.stomp.SendChatMessage
 import com.example.chatapp.chat.message.dto.stomp.ChatMessageEvent
@@ -31,7 +31,7 @@ class SendMessageIntegrationTest(
     private val userRepository: UserRepository,
     private val chatRoomUseCase: ChatRoomUseCase,
     private val chatMessageRepository: ChatMessageRepository,
-    private val chatMessageController: ChatMessageController,
+    private val chatMessageStompController: ChatMessageStompController,
 ) {
     @MockBean
     lateinit var simpMessagingTemplate: SimpMessagingTemplate
@@ -56,7 +56,7 @@ class SendMessageIntegrationTest(
         val userPrincipal = UserPrincipal(sender.id!!, authorities)
         val authentication = UsernamePasswordAuthenticationToken(userPrincipal, userPrincipal.authorities)
 
-        chatMessageController.sendMessage(authentication, sendChatMessage)
+        chatMessageStompController.sendMessage(authentication, sendChatMessage)
         val messages = chatMessageRepository.findAll()
 
         assertThat(messages).hasSize(1)
@@ -65,7 +65,7 @@ class SendMessageIntegrationTest(
         val chatMessageEventArgumentCaptor = ArgumentCaptor.forClass(ChatMessageEvent::class.java)
 
         Mockito.verify(simpMessagingTemplate).convertAndSend(
-            ArgumentMatchers.eq("/sub/chatroom/" + createChatRoomResponse.id),
+            ArgumentMatchers.eq("/topic/chatroom/" + createChatRoomResponse.id),
             chatMessageEventArgumentCaptor.capture()
         )
 

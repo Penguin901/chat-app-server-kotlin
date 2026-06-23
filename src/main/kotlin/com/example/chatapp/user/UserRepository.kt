@@ -1,10 +1,11 @@
 package com.example.chatapp.user
 
+import com.example.chatapp.auth.oauth.OAuthProvider
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, Long> {
 
-    fun findByEmail(email: String): User?
+    fun findByOauthProviderAndOauthId(oAuthProvider: OAuthProvider, oauthId: String): User?
 
     // 친구 추가 전 해당 이메일의 사용자 있는지 조회
     fun findByEmailAndDeletedFalseAndIdNot(email: String, userid: Long): User?

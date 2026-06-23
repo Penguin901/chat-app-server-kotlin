@@ -15,6 +15,7 @@ import java.time.LocalDateTime
     name = "users",
     uniqueConstraints = [
         UniqueConstraint(name = "uk_users_email", columnNames = ["email"]),
+        UniqueConstraint(name = "uk_users_oauth_provider_oauth_id", columnNames = ["oauth_provider", "oauth_id"]),
         UniqueConstraint(name = "uk_users_username", columnNames = ["username"])
     ]
 )

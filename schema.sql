@@ -16,6 +16,7 @@ CREATE TABLE `users` (
  `deleted_at` datetime(6) DEFAULT NULL,
  PRIMARY KEY (`id`),
   UNIQUE KEY `uk_users_email` (`email`),
+  UNIQUE KEY `uk_users_oauth_provider_oauth_id` (`oauth_provider`,`oauth_id`),
   UNIQUE KEY `uk_users_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
@@ -46,7 +47,7 @@ CREATE TABLE `users` (
   `last_message_at` datetime(6) NOT NULL,
   `created_at` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_chat_rooms_direct_room_key` (`direct_room_key`),
+  UNIQUE KEY `uk_chat_rooms_direct_room_key` (`direct_room_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 
@@ -68,8 +69,8 @@ CREATE TABLE `chat_members` (
 -- 5. chat_messages 테이블
 
 CREATE TABLE `chat_messages` (
- `chat_room_id` bigint(20) NOT NULL,
  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+ `chat_room_id` bigint(20) NOT NULL,
  `sender_id` bigint(20) NOT NULL,
  `sent_at` datetime(6) NOT NULL,
  `message_content` varchar(255) NOT NULL,

@@ -85,11 +85,11 @@ class StompChannelInterceptor(
     }
 
     private fun extractChatRoomId(destination: String?): Long {
-        if (destination.isNullOrBlank() || !destination.startsWith("/sub/chatroom/")) {
+        if (destination.isNullOrBlank() || !destination.startsWith("/topic/chatroom/")) {
             throw AccessDeniedException("Invalid destination")
         }
 
-        val chatRoomId = destination.substringAfter("/sub/chatroom/")
+        val chatRoomId = destination.substringAfter("/topic/chatroom/")
         return chatRoomId.toLongOrNull() ?: throw AccessDeniedException("Invalid destination")
     }
 }

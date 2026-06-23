@@ -37,7 +37,7 @@ class UserServiceImpl(
 
     override fun findOrCreateUserByOAuth(oAuthUser: OAuthUser): User {
         val provider = oAuthUser.provider
-        val existingUser = userRepository.findByEmail(oAuthUser.email)
+        val existingUser = userRepository.findByOauthProviderAndOauthId(oAuthUser.provider, oAuthUser.oauthId)
 
         if (existingUser != null) {
             // 탈퇴한 회원인 경우

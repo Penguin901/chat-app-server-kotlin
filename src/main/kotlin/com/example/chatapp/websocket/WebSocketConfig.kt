@@ -18,8 +18,8 @@ class WebSocketConfig(
     }
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
-        config.enableSimpleBroker("/sub") // 서버 -> 클라이언트
-        config.setApplicationDestinationPrefixes("/pub") // 클라이언트 -> 서버
+        config.enableSimpleBroker("/topic") // 서버 -> 클라이언트
+        config.setApplicationDestinationPrefixes("/app") // 클라이언트 -> 서버
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {

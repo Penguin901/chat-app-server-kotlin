@@ -2,7 +2,7 @@ package com.example.chatapp
 
 import com.example.chatapp.auth.oauth.OAuthProvider
 import com.example.chatapp.chat.member.ChatMemberRepository
-import com.example.chatapp.chat.message.ChatMessageController
+import com.example.chatapp.chat.message.ChatMessageStompController
 import com.example.chatapp.chat.message.dto.stomp.SendChatMessage
 import com.example.chatapp.chat.room.ChatRoomUseCase
 import com.example.chatapp.chat.room.dto.request.CreateChatRoomRequest
@@ -25,7 +25,7 @@ class ReactivateChatMemberIntegrationTest(
     private val userRepository: UserRepository,
     private val chatRoomUseCase: ChatRoomUseCase,
     private val chatMemberRepository: ChatMemberRepository,
-    private val chatMessageController: ChatMessageController
+    private val chatMessageStompController: ChatMessageStompController
 ) {
     @Test
     fun `reactivate a chat member when another member sends a message`() {
@@ -57,7 +57,7 @@ class ReactivateChatMemberIntegrationTest(
         val authentication = UsernamePasswordAuthenticationToken(userPrincipal, userPrincipal.authorities)
 
         // receiver가 sender에게 메세지 전송 -> 비활성멤버의 경우 활성멤버로 업데이트
-        chatMessageController.sendMessage(authentication, sendChatMessage)
+        chatMessageStompController.sendMessage(authentication, sendChatMessage)
 
         val reactivatedSender = chatMemberRepository.findByChatRoomIdAndUserId(createChatRoomResponse.id, sender.id!!)
 
