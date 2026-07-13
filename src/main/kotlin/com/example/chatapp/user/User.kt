@@ -51,7 +51,7 @@ class User private constructor(
 
     // 프로필 정보
     @Column(length = 20)
-    var nickname: String? = null //빈 문자열로 초기화. 이후 이름 설정 화면에서 값 저장
+    var nickname: String? = null //null로 초기화. 이후 이름 설정 화면에서 값 저장
         private set
 
     var bio: String? = null //상태메세지
