@@ -167,13 +167,7 @@
   - 기존 코드는 채팅방 생성과 조회가 동일 트랜잭션에 있었음. 따라서 생성 작업에서 발생한 예외가 재조회 시에도 영향을 미치므로,<br>
     이를 해결하기 위해 아래와 같이 전체 로직 변경<br>
 
-    &nbsp;&nbsp;(1) Usecase(채팅방 생성 함수를 호출하는 클래스)에 있던 @Transactional 제거<br>
-    &nbsp;&nbsp;(2) Usecase에서 채팅방 조회 수행<br>
-    &nbsp;&nbsp;(3) 채팅방 생성 함수에만 @Transactional 선언하여 채팅방 생성 시 발생한 예외가 채팅방 재조회 시 영향을 미치지 않도록 함
-
-- 코드
-  커밋후 이미지 첨부
-  유스케이스,. 서비스
+<img width="955" height="163" alt="Screenshot 2026-08-25 at 12 24 33 AM" src="https://github.com/user-attachments/assets/78909f96-5652-438c-ad41-82fca90bc8f0" />
 
 - 결과
   - 채팅방 생성의 원자성을 보장하면서, 멀티 스레드 환경에서 UNIQUE 제약조건 위반 시
@@ -195,15 +189,14 @@
 - 해결 과정
   - 현재 코드에는 ChatRoom 객체를 생성하기 위해 채팅방 조회하는 코드가 있음
   - 해당 코드가 ChatMessages 테이블에 메시지를 insert 하는 코드보다 선행하므로, 조회 시점에 X Lock 을 획득하여 트랜잭션 종료 시까지 다른 트랜잭션의 접근을 차단함
-  - 조회시점에 X Lock 을 획득하기 위해 채팅방 조회 함수에 비관적락(PESSIMISTIC_WRITE) 적용
+  - 조회시점에 X Lock 을 획득하기 위해 채팅방 조회 함수에 비관적락(PESSIMISTIC_WRITE) 적용<br>
 
-- 실제 코드
+    - 채팅방 조회 함수에 비관적락(PESSIMISTIC_WRITE) 적용<br>
+      <img width="415" height="72" alt="Screenshot 2026-08-24 at 11 39 32 PM" src="https://github.com/user-attachments/assets/09c81299-2923-483a-999c-706460732cd6" />
 
-  커밋후 캡쳐한 이미지 첨부   chatRoomService.findChatRoomForUpdate 가 호출하는 레포지토리 함수
-  <img width="659" height="385" alt="Screenshot 2026-08-24 at 3 20 20 PM" src="https://github.com/user-attachments/assets/57efeeb2-6289-4044-b55c-b85edcc531e2" />
-  메세지 전송 함수
-
-
+    - 메시지 처리 함수<br>
+      <img width="659" height="385" alt="Screenshot 2026-08-24 at 3 20 20 PM" src="https://github.com/user-attachments/assets/57efeeb2-6289-4044-b55c-b85edcc531e2" />
+    
 - 결과
   - 동일 조건으로 부하 테스트를 다시 수행한 결과 데드락이 발생하지 않았음. 또한, 메시지 전
     송이 모두 성공하였고,  평균 응답시간도 70.27ms -> 14.05ms로 개선되었음
