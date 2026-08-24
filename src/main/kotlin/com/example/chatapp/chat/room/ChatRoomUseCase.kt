@@ -7,27 +7,52 @@ import com.example.chatapp.common.exception.ErrorCode
 import com.example.chatapp.common.exception.UserException
 import com.example.chatapp.user.User
 import com.example.chatapp.user.UserService
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Transactional
 class ChatRoomUseCase(
     private val userService: UserService,
     private val chatRoomService: ChatRoomService,
 ) {
     fun getOrCreateChatRoom(requesterId: Long, createChatRoomRequest: CreateChatRoomRequest): CreateChatRoomResponse {
-        val participantIds: List<Long> = createChatRoomRequest.participantIds
-
+        val participantIds = createChatRoomRequest.participantIds
         validateParticipants(participantIds, requesterId)
+
         val allUserIds = participantIds + requesterId
+        val participants = userService.getUsersOrThrow(allUserIds)
 
-        val users: List<User> = userService.getUsersOrThrow(allUserIds)
-        val chatRoom = chatRoomService.ensureChatRoom(users, createChatRoomRequest.roomName)
+        if (participants.size == 2) {
+            val participantId1 = participants[0].id
+            val participantId2 = participants[1].id
 
-        return CreateChatRoomResponse.from(chatRoom, users.map { user -> user.id!! })
+            val directRoomKey = chatRoomService.generateDirectRoomKey(participantId1!!, participantId2!!)
+            val existingChatRoom = chatRoomService.findDirectChatRoom(directRoomKey)
+
+            if (existingChatRoom != null) {
+                return CreateChatRoomResponse.from(existingChatRoom, participants.map { user -> user.id!! })
+            }
+
+            val chatRoom = try {
+                chatRoomService.createDirectChatRoom(directRoomKey, participants)
+            } catch (e: DataIntegrityViolationException) {
+                chatRoomService.findDirectChatRoom(directRoomKey)
+                    ?: throw ChatRoomException(ErrorCode.CHAT_ROOM_NOT_FOUND)
+            }
+
+            return CreateChatRoomResponse.from(chatRoom, participants.map { user -> user.id!! })
+        }
+
+        val chatRoom = chatRoomService.createGroupChatRoom(createChatRoomRequest.roomName, participants)
+
+        return CreateChatRoomResponse.from(
+            chatRoom,
+            participants.map { user -> user.id!! }
+        )
     }
 
+    @Transactional
     fun leaveChatRoom(userId: Long, chatRoomId: Long) {
         //사용자가 방을 나감(해당 룸의 멤버 비활성화 또는 삭제)
         chatRoomService.removeChatMember(userId, chatRoomId)
@@ -47,5 +72,5 @@ class ChatRoomUseCase(
             throw ChatRoomException(ErrorCode.CANNOT_ADD_SELF_AS_PARTICIPANT)
         }
     }
-
 }
+

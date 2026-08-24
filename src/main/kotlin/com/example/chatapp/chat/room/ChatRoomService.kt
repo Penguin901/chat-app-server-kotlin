@@ -7,9 +7,15 @@ interface ChatRoomService {
 
     fun getChatRoomsPreview(currentUserId: Long): List<ChatPreviewResponse>
 
-    fun findChatRoomOrThrow(chatRoomId: Long): ChatRoom
+    fun findChatRoomForUpdate(chatRoomId: Long): ChatRoom
 
-    fun ensureChatRoom(participants: List<User>, roomName: String?): ChatRoom
+    fun findDirectChatRoom(directRoomKey: String): ChatRoom?
+
+    fun createDirectChatRoom(directRoomKey: String, participants: List<User>): ChatRoom
+
+    fun generateDirectRoomKey(participantId1: Long, participantId2: Long): String
+
+    fun createGroupChatRoom(roomName: String?, participants: List<User>): ChatRoom
 
     fun validateMember(chatRoomId: Long, senderId: Long)
 

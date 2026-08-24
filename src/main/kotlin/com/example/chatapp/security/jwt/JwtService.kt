@@ -33,8 +33,8 @@ class JwtService(@Value("\${spring.jwt.secret}") secret: String) {
     fun createTokens(userId: Long): IssuedTokens {
         val now = LocalDateTime.now()
       //  val LocalDateTime accessTokenExpirationAt = now.plusHours(1);
-        val accessTokenExpirationAt = now.plusMinutes(1)
-        val refreshTokenExpirationAt = now.plusDays(5)
+        val accessTokenExpirationAt = now.plusDays(60)
+        val refreshTokenExpirationAt = now.plusDays(120)
 
         val issuedAt = Date.from(now.atZone(ZoneId.systemDefault()).toInstant())
         val accessTokenExpirationDate = Date.from(accessTokenExpirationAt.atZone(ZoneId.systemDefault()).toInstant())

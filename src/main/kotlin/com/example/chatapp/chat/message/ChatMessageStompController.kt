@@ -14,9 +14,16 @@ class ChatMessageStompController(
     private val chatMessageUseCase: ChatMessageUseCase,
 ) {
     @MessageMapping("/message")
-    fun sendMessage(authentication: Authentication, @Payload payload: SendChatMessage) {
+    fun sendMessage(
+        authentication: Authentication,
+        @Payload payload: SendChatMessage
+    ) {
         val userPrincipal = authentication.principal as UserPrincipal
-        val event = chatMessageUseCase.handleSendMessage(userPrincipal.userId, payload)
+
+        val event = chatMessageUseCase.handleSendMessage(
+            userPrincipal.userId,
+            payload
+        )
 
         simpMessagingTemplate.convertAndSend(
             "/topic/chatroom/${payload.chatRoomId}",

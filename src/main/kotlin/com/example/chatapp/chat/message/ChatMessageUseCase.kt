@@ -1,23 +1,25 @@
 package com.example.chatapp.chat.message
 
 import com.example.chatapp.chat.message.dto.stomp.ChatMessageEvent
+import com.example.chatapp.chat.message.dto.stomp.SendChatMessage
 import com.example.chatapp.chat.room.ChatRoomService
 import com.example.chatapp.user.UserService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Transactional
 class ChatMessageUseCase(
     private val chatRoomService: ChatRoomService,
     private val userService: UserService,
     private val chatMessageRepository: ChatMessageRepository
 ) {
+    @Transactional
     fun handleSendMessage(
         senderId: Long,
-        request: com.example.chatapp.chat.message.dto.stomp.SendChatMessage
+        request: SendChatMessage
     ): ChatMessageEvent {
-        val chatRoom = chatRoomService.findChatRoomOrThrow(request.chatRoomId)
+
+        val chatRoom = chatRoomService.findChatRoomForUpdate(request.chatRoomId)
         val sender = userService.getUserOrThrow(senderId)
 
         chatRoomService.validateMember(chatRoom.id!!, senderId)

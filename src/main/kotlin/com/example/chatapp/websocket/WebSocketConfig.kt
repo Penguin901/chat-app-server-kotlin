@@ -23,6 +23,14 @@ class WebSocketConfig(
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        registration.interceptors(stompChannelInterceptor)
+        registration.taskExecutor()
+            .corePoolSize(4)
+            .maxPoolSize(8)
+            .queueCapacity(200)
+
+        registration.interceptors(
+            stompChannelInterceptor
+        )
     }
+
 }

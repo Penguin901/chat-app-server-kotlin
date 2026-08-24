@@ -12,13 +12,13 @@
 - 사용자 인증 토큰(JSON Web Token) 발급 및 검증
 #### User
 - 회원가입/로그인
-    - 소셜 로그인(OIDC(OpenID Connect))을 통한 회원가입/로그인
-    - 로그인 시 사용자 인증을 위한 토큰(JSON Web Token) 발급
+  - 소셜 로그인(OIDC(OpenID Connect))을 통한 회원가입/로그인
+  - 로그인 시 사용자 인증을 위한 토큰(JSON Web Token) 발급
 - 회원탈퇴
-    - 회원탈퇴 시 사용자 비활성
+  - 회원탈퇴 시 사용자 비활성
 - 회원정보 수정
-    - 프로필 수정
-    - 계정 아이디 수정
+  - 프로필 수정
+  - 계정 아이디 수정
 
 #### Friend
 - 친구 추가할 사용자 검색
@@ -103,113 +103,111 @@
 <details>
 <summary>보기</summary>
 
-### 소셜 로그인 시 인증 책임을 클라이언트와 서버 중 어느 곳에 둘 것인가?
+### 1. 소셜 로그인 시 인증 책임을 클라이언트와 서버 중 어느 곳에 둘 것인가?
 - 구현 방식
-    - A: 클라이언트에서 OIDC(OpenID Connect) 인증 후 ID Token 획득
-    - B: 서버에서  OIDC(OpenID Connect) 인증 후 ID Token 획득
+  - A: 클라이언트에서 OIDC(OpenID Connect) 인증 후 ID Token 획득
+  - B: 서버에서  OIDC(OpenID Connect) 인증 후 ID Token 획득
 
 - 선택
-    - A: 클라이언트에서 ID Token 획득 후 서버로 전송, 서버에서 검증 후 JWT 발급
+  - A: 클라이언트에서 ID Token 획득 후 서버로 전송, 서버에서 검증 후 JWT 발급
 - 이유
-    - 모바일 환경에 적합한 사용자 경험 제공
-    - 서버는 ID Token 검증과 자체 JWT 발급에만 집중하도록 함
+  - 모바일 환경에 적합한 사용자 경험 제공
+  - 서버는 ID Token 검증과 자체 JWT 발급에만 집중하도록 함
 
-### 채팅방을 언제 생성할 것인가?
+### 2. 채팅방을 언제 생성할 것인가?
 - 구현 방식
-    - A: HTTP 요청으로 채팅방 생성 후, WebSocket 요청으로 메시지 전송
-    - B: 채팅방 생성과 메시지 전송을 WebSocket 요청에서 처리<br>
-      \* 사용자 경험은 동일함
+  - A: HTTP 요청으로 채팅방 생성 후, WebSocket 요청으로 메시지 전송
+  - B: 채팅방 생성과 메시지 전송을 WebSocket 요청에서 처리<br>
+    \* 사용자 경험은 동일함
 - 선택
-    - A: HTTP 요청으로 채팅방 생성 후, WebSocket 요청으로 메시지 전송
+  - A: HTTP 요청으로 채팅방 생성 후, WebSocket 요청으로 메시지 전송
 - 이유
-    - 채팅방 생성과 메시지 전송 요청 분리
-    - 메시지 처리 로직 단순화
-### 채팅방 퇴장 시 사용자의 참여 상태를 어떻게 관리할 것인가?
+  - 채팅방 생성과 메시지 전송 요청 분리
+  - 메시지 처리 로직 단순화
+
+### 3. 채팅방 퇴장 시 사용자의 참여 상태를 어떻게 관리할 것인가?
 - 구현 방식
-    - A: 퇴장한 사용자의 참여 상태만 변경 (Soft Delete)
-    - B: 퇴장한 사용자를 채팅방 멤버 목록에서 삭제 (Hard Delete)
+  - A: 퇴장한 사용자의 참여 상태만 변경 (Soft Delete)
+  - B: 퇴장한 사용자를 채팅방 멤버 목록에서 삭제 (Hard Delete)
 - 선택
-    - A: 퇴장한 사용자의 참여 상태만 변경 (Soft Delete)
+  - A: 퇴장한 사용자의 참여 상태만 변경 (Soft Delete)
 - 이유
-    -  채팅방 멤버 목록에서 삭제(Hard Delete) 할 경우 동일 사용자 간 채팅방과 메시지의 중복 생성 문제가 있음
-### Access Token 만료를 어떻게 감지하고 갱신할 것인가?
+  - 채팅방 멤버 목록에서 삭제(Hard Delete) 할 경우 동일 사용자 간 채팅방과 메시지의 중복 생성 문제가 있음
+
+### 4. Access Token 만료를 어떻게 감지하고 갱신할 것인가?
 - 구현 방식
-    - A: HTTP 요청 시 401을 응답받은 경우 클라이언트에서 재발급 요청
-    - B: 클라이언트에서 Access Token 만료 전 갱신 요청
+  - A: HTTP 요청 시 401을 응답받은 경우 클라이언트에서 재발급 요청
+  - B: 클라이언트에서 Access Token 만료 전 갱신 요청
 - 선택
-    - A: HTTP 요청 시 401을 응답받은 경우 클라이언트에서 재발급 요청
+  - A: HTTP 요청 시 401을 응답받은 경우 클라이언트에서 재발급 요청
 - 이유
-    - 클라이언트에서 Access Token의 만료 시점을 별도로 관리하지 않아도 됨
-    - 서버 응답을 기준으로 Access Token을 갱신하기 위함<br>
-      \* 만료 전 갱신 방식으로 개선 예정
+  - 클라이언트에서 Access Token의 만료 시점을 별도로 관리하지 않아도 됨
+  - 서버 응답을 기준으로 Access Token을 갱신하기 위함<br>
+    \* 만료 전 갱신 방식으로 개선 예정
+
 </details>
 
-## 문제 발생 및 해결 과정
+## 개선/문제해결 사례
+
 <details>
 <summary>보기</summary>
 
-### 문제 상황:  클라이언트(Flutter 앱)와 서버 간 End To End 테스트 중 채팅방 나가기 실패
+### 1. 멀티 스레드 환경에서 1:1 채팅방 생성 시 발생한 동시성 문제 해결 사례
+- 문제
+  - JUnit에서 두 개의 스레드를 이용한 동시성 테스트 중,<br>
+    사용자 A와 B가 동시에 상대방과의 1:1 채팅방 생성 시 DataIntegrityViolationException 발생
 
-- 시퀀스 다이어그램
- ```mermaid
-sequenceDiagram
+- 분석
+  - 1:1 채팅방의 중복 생성을 방지하기 위해 두 사용자의 아이디를 조합한 directRoomKey를 생성하고 해당 컬럼에 UNIQUE 제약조건을 적용했었음
+  - 채팅방 생성전 기존 채팅방의 존재 여부 조회 시에는 두 사용자 간의 채팅방이 존재하지 않았으므로, 두 스레드는 동일한 directRoomKey로 채팅방 생성 시도
+  - 먼저 실행된 스레드 1이 채팅방 생성에 성공하고, 이후 스레드 2에서 생성을 시도했으나 스레드 1이 생성한 채팅방으로 인해 예외 발생
 
-    actor U1 as 사용자 A
-    actor U2 as 사용자 B
+- 해결 과정
+  - DataIntegrityViolationException 발생 시 다른 스레드가 방을 생성한 것으로 판단하고, 기존 채팅방을 다시 조회하여 반환하도록 함
+  - 기존 코드는 채팅방 생성과 조회가 동일 트랜잭션에 있었음. 따라서 생성 작업에서 발생한 예외가 재조회 시에도 영향을 미치므로,<br>
+    이를 해결하기 위해 아래와 같이 전체 로직 변경<br>
 
-    participant Server as 서버
-    U1->>Server: 사용자 B와의 채팅방 생성 및 메시지 전송
-    U1->>Server: 채팅방 나가기
+    &nbsp;&nbsp;(1) Usecase(채팅방 생성 함수를 호출하는 클래스)에 있던 @Transactional 제거<br>
+    &nbsp;&nbsp;(2) Usecase에서 채팅방 조회 수행<br>
+    &nbsp;&nbsp;(3) 채팅방 생성 함수에만 @Transactional 선언하여 채팅방 생성 시 발생한 예외가 채팅방 재조회 시 영향을 미치지 않도록 함
 
-    U2->>Server: 메시지 전송 (사용자 A 재입장)
+- 코드
+  커밋후 이미지 첨부
+  유스케이스,. 서비스
 
-    U2->>Server: 채팅방 나가기
+- 결과
+  - 채팅방 생성의 원자성을 보장하면서, 멀티 스레드 환경에서 UNIQUE 제약조건 위반 시
+    먼저 생성된 채팅방을 재조회하여 반환할 수 있게 되었음
 
-    U1->>Server: 채팅방 나가기
-    Server-->>U1: Error Code: NOT_A_MEMBER
- ```
-### 원인 분석
+### 2. 메시지 전송 부하 테스트 중 DB 데드락 문제 해결 사례
 
-#### 1. 서버에서 Error Code: NOT_A_MEMBER 응답한 이유
-- 채팅방 삭제 시 해당 방의 멤버인지 확인 후 삭제하는데, 사용자 A의 나가기 요청 전 DB에서 채팅방이 삭제되었음
-- 사용자 A는 존재하지 않는 채팅방에 나가기 요청을 하게 되어 예외 발생, 서버에서 NOT_A_MEMBER 응답<br>
+- 문제
+  - k6를 이용해 배포한 서버를 대상으로 메시지 전송 부하 테스트를 진행하던 중, 일부 메시지
+    전송 실패 및 DB에서 데드락 발생
 
-&nbsp;&nbsp;&nbsp;※ 서버에서 채팅방이 이미 삭제되었으나 사용자 A의 나가기 요청이 가능했던 이유<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-> 클라이언트는 자신의 요청이 성공한 경우에만 로컬 DB를 업데이트하며, 로컬 DB에서 채팅방 목록을 조회함.<br>&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 따라서 사용자 B의 나가기 요청으로 서버에서 삭제된 채팅방은 사용자 B의 로컬 DB에만 반영되었고,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 사용자 A의 로컬 DB에는 반영되지 않아 사용자 A의 채팅방 목록에 기존 채팅방이 그대로 남아 있었음
+- 원인 분석
+  - 클라이언트로부터 수신한 메시지를 WebSocket STOMP를 통해 브로드캐스트 하기 전, ChatMessages 테이블에 메시지를 insert 해야 함
+  - ChatMessages 테이블에 insert 하기 위해서는 외래키인 chatRoomId 참조 필요.
+    이때 chatRoomId의 외래키 제약조건을 검사하는 과정에서 두 개의 트랜잭션이 각각 S lock을 획득함
+  - 이후 ChatRooms 테이블의 lastMessage 컬럼을 update 하기 위해  X Lock 필요.
+    두 트랜잭션 모두 S lock을 소유함과 동시에 X lock을 대기하고 있어 데드락 발생
 
-#### 2. 사용자 A 재입장 후 나가기 요청 전 채팅방이 삭제된 이유
-- 채팅방은 방의 모든 멤버가 비활성 상태일 때에만 삭제 가능 (입장 시 활성멤버, 퇴장 시 비활성멤버로 변경)
-- 사용자 A 재입장 시 방의 멤버인 A의 상태가 비활성(active = false) -> 활성(active = true)으로 변경되지 않음
-- 사용자 B의 나가기 요청 후 모든 멤버가 비활성 상태이므로 방이 삭제됨<br>
+- 해결 과정
+  - 현재 코드에는 ChatRoom 객체를 생성하기 위해 채팅방 조회하는 코드가 있음
+  - 해당 코드가 ChatMessages 테이블에 메시지를 insert 하는 코드보다 선행하므로, 조회 시점에 X Lock 을 획득하여 트랜잭션 종료 시까지 다른 트랜잭션의 접근을 차단함
+  - 조회시점에 X Lock 을 획득하기 위해 채팅방 조회 함수에 비관적락(PESSIMISTIC_WRITE) 적용
 
-  <확인><br>
-    - 디버깅 -> 사용자 A 재입장 시 A의 상태가 활성화되는지 확인<br><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<img width="666" height="572" alt="Untitled Diagram drawio-4" src="https://github.com/user-attachments/assets/99d9f154-e6ea-4b19-8f98-99f325405163" /><br>
-    - 디버깅 결과<br><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<img width="658" height="150" alt="Screenshot 2026-06-20 at 10 50 00 PM" src="https://github.com/user-attachments/assets/cab4c120-2dad-4f28-8b2b-8ffd73667a5b" /><br>
-    - DB에 저장된 값: active = false
+- 실제 코드
 
-    - 결론<br>
-        - 디버깅 결과(active = true)와 DB에 저장된 값(active = false) 불일치<br>
-          -> 채팅방 멤버 활성화 로직은 정상 동작, DB 업데이트 과정에 문제 있음
+  커밋후 캡쳐한 이미지 첨부   chatRoomService.findChatRoomForUpdate 가 호출하는 레포지토리 함수
+  <img width="659" height="385" alt="Screenshot 2026-08-24 at 3 20 20 PM" src="https://github.com/user-attachments/assets/57efeeb2-6289-4044-b55c-b85edcc531e2" />
+  메세지 전송 함수
 
-#### 3. 사용자 A 재입장 시 활성상태로 DB가 업데이트되지 않은 이유
-- Spring Data JPA의 Dirty Checking으로 DB를 업데이트 하도록 구현하였으나,<br>
-  &nbsp;@Transactional 선언을 하지 않아 UPDATE 쿼리가 실행되지 않았고, DB에 반영되지 않았음<br>
 
-  <확인><br>
-    - logging.level.org.hibernate.SQL=DEBUG 설정을 통해 SQL 로그 출력<br>
-      -> 채팅방의 멤버 상태를 변경하는 UPDATE 쿼리가 출력되지 않음
+- 결과
+  - 동일 조건으로 부하 테스트를 다시 수행한 결과 데드락이 발생하지 않았음. 또한, 메시지 전
+    송이 모두 성공하였고,  평균 응답시간도 70.27ms -> 14.05ms로 개선되었음
 
-### 해결
-- activateInactiveMembers를 호출하는 클래스(ChatMessageUseCase)에 @Transactional 선언 추가
-
-### 배운점
-- 영속성 컨텍스트의 생명주기와 트랜잭션의 관계
-- 테스트 코드의 중요성
-    - 사전에 서버에서 테스트해 봤으면 클라이언트와의 End To End 테스트 전에 문제 발견할 수 있었음
 </details>
 
 ##  향후 과제
