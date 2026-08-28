@@ -47,7 +47,7 @@
 <summary>보기</summary>
 
 ### [Swagger API 문서](https://my-chat-test.duckdns.org/api/swagger-ui/index.html#/)
->서버 운영상황에 따라 페이지가 작동하지 않을 수 있습니다.
+>서버 운영 여부에 따라 접속이 어려울 수 있습니다.
 
 ### REST API
 #### Authentication
