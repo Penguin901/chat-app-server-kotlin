@@ -27,8 +27,6 @@ class ChatMessageUseCase(
         val chatMessage = ChatMessage.create(chatRoom, sender, request.messageContent)
         chatMessageRepository.save(chatMessage)
 
-        chatRoom.updateLastMessageContent(chatMessage)
-
         // 1대1채팅시에만 멤버 활성화 (그룹채팅은 새멤버로 추가)
         chatRoomService.activateInactiveMembers(chatRoom.id)
 

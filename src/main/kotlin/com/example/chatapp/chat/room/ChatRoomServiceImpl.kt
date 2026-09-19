@@ -21,13 +21,23 @@ class ChatRoomServiceImpl(
     override fun getChatRoomsPreview(currentUserId: Long): List<ChatPreviewResponse> {
         val chatRooms = chatRoomRepository.findActiveChatRoomsByUserId(currentUserId)
 
+        val roomIds = chatRooms.map { it.id!! }
+
+        val latestMessages =
+            chatMessageRepository.findLatestMessagesByChatRoomIds(roomIds)
+
+        val latestMessageByRoomId =
+            latestMessages.associateBy { it.chatRoom.id!! }
+
         return chatRooms.map { chatRoom ->
+            val lastMessage = latestMessageByRoomId[chatRoom.id!!]
+
             ChatPreviewResponse.from(
                 chatRoom,
+                lastMessage!!
             )
         }
     }
-
     // 기존 채팅방이 존재하는 경우
     override fun findChatRoomForUpdate(chatRoomId: Long): ChatRoom {
         return chatRoomRepository.findByIdForUpdate(chatRoomId)
