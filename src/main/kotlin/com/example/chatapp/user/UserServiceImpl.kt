@@ -37,20 +37,22 @@ class UserServiceImpl(
 
     override fun findOrCreateUserByOAuth(oAuthUser: OAuthUser): User {
         val provider = oAuthUser.provider
-        val existingUser = userRepository.findByOauthProviderAndOauthId(oAuthUser.provider, oAuthUser.oauthId)
+        val existingOAuthUser = userRepository.findByOauthProviderAndOauthId(oAuthUser.provider, oAuthUser.oauthId)
 
-        if (existingUser != null) {
+        // 이미 존재하는 사용자인 경우
+        if (existingOAuthUser != null) {
             // 탈퇴한 회원인 경우
-            if (existingUser.deleted) {
-                existingUser.reactivateAccount(provider, oAuthUser.oauthId)
-                return existingUser
+            if (existingOAuthUser.deleted) {
+                existingOAuthUser.reactivateAccount()
             }
+            return existingOAuthUser
+        }
 
-            if (existingUser.oauthProvider != provider) {
+        // 가입된 이메일인데 provider가 다른 경우
+        val existingEmailUser = userRepository.findByEmail(oAuthUser.email)
+
+        if (existingEmailUser != null && existingEmailUser.oauthProvider != provider) {
                 throw AuthException(ErrorCode.OAUTH_PROVIDER_MISMATCH)
-            }
-
-            return existingUser
         }
 
         // 사용자가 존재하지 않는 경우 새로운 사용자 생성

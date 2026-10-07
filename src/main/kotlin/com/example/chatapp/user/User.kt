@@ -93,11 +93,9 @@ class User private constructor(
         this.refreshExpiration = refreshTokenInfo.refreshExpiration
     }
 
-    fun reactivateAccount(provider: OAuthProvider, oauthId: String) {
+    fun reactivateAccount() {
         this.deleted = false
         this.deletedAt = null
-        this.oauthProvider = provider
-        this.oauthId = oauthId
     }
 
     // 현재는 계정 비활성화하는 것으로 탈퇴 처리

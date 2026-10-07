@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.23'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.9.23'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.23'
+    id "org.jetbrains.kotlin.plugin.lombok" version '1.9.23'
 
 }
 
@@ -63,6 +64,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 tasks.named('test') {

@@ -7,6 +7,8 @@ interface UserRepository : JpaRepository<User, Long> {
 
     fun findByOauthProviderAndOauthId(oAuthProvider: OAuthProvider, oauthId: String): User?
 
+    fun findByEmail(email: String): User?
+
     // 친구 추가 전 해당 이메일의 사용자 있는지 조회
     fun findByEmailAndDeletedFalseAndIdNot(email: String, userid: Long): User?
 
